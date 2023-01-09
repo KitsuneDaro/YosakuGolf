@@ -6,14 +6,14 @@ class ExApp {
         this.imgNames = imgNames;
 
         this.rnd = new THREE.WebGLRenderer({
-            canvas: $('#app').get(),
+            canvas: document.querySelector('#app'),//$('#app').get(),
             antialias: false
         });
         this.rnd.setPixelRatio(window.devicePixelRatio);
         this.rnd.setSize(this.w, this.h);
 
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(45, width / height);
+        this.camera = new THREE.PerspectiveCamera(45, this.w / this.h);
         this.camera.position.set(0, 0, 1000);
 
         this.textures = {};
