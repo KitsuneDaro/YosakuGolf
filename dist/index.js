@@ -1,16 +1,18 @@
 window.addEventListener('load', () => {
-    new Main();
-})
+    new Main($('#app'));
+});
 
 class Main {
-    constructor() {
-        this.appW = 300;
-        this.appH = 300;
+    constructor(jelm) {
+        let w = jelm.outerWidth(true);
+        let h = w;
         this.imgNames = [];
-        this.app = new ExApp($('#app'), this.appW, this.appH, this.imgNames);
+
+        this.app = new ExApp(jelm, w, h, this.imgNames);
 
         this.state = new Game(this.app, 0);
         this.nowTime = null;
+
         window.requestAnimationFrame(this.tick.bind(this));
     }
 
@@ -61,59 +63,20 @@ class Game extends State {
     constructor(app, stageNum) {
         super(app);
         this.stage = new Stage(this.app, stageNum);
-
-        const geometry = new THREE.BoxGeometry(400, 400, 400);
-        const material = new THREE.MeshNormalMaterial();
-        const box = new THREE.Mesh(geometry, material);
-        this.app.scene.add(box);
+        this.ox = 4.5;
+        this.oy = 4.5;
+        this.oz = 0;
+        this.angle = 0;
     }
 
-    renderStage(deltaTime) {
+    tick(deltaTime) {
+        this.angle += 1 / 10 * 2 * Math.PI * deltaTime / 1000;
+        this.app.camera.position.set(this.ox, this.oy, this.oz + 50);
+        this.app.camera.lookAt(new THREE.Vector3(this.ox, this.oy, this.oz));
+
+        this.app.light.position.set(this.ox, this.oy + Math.sin(this.angle) * 10, this.oz + Math.cos(this.angle) * 10);
+        this.app.light.target.position.set(this.ox, this.oy, this.oz);
         this.app.render();
         return 'continue';
-    }
-}
-
-//ステージデータの格納
-//表示スプライトも格納
-//マップの頂点の間隔は1なので、傾きは差で良し
-class Stage {
-    constructor(app, stageNum) {
-        this.app = app;
-        this.w = 10;
-        this.h = 10;
-
-        this.num = stageNum;
-        this.map = new Grid(this.w, this.h, 0);
-        this.grads = new Gradients(this.w, this.h);
-        this.tiles = new Tiles(this.w - 1, this.h - 1);
-
-        this.test();
-    }
-
-    test() {
-        this.createStage();
-        this.grads.evalAll(this.map);
-    }
-
-    //テスト用
-    createStage() {
-        for (let x = 0; x < this.w; x++) {
-            for (let y = 0; y < this.h; y++) {
-                this.map.set(x, y, Math.random() * 0.2);
-            }
-        }
-
-        for (let x = 0; x < this.w - 1; x++) {
-            for (let y = 0; y < this.h - 1; y++) {
-                if (Math.random() > 0.5) {
-                    this.tiles.eval(this.app.scene, this.map, x, y, Tiles.Slash())
-                } else {
-                    this.tiles.eval(this.app.scene, this.map, x, y, Tiles.BackSlash());
-                }
-            }
-        }
-
-        console.log('ok');
     }
 }

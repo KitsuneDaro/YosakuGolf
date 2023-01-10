@@ -12,7 +12,7 @@ class Tiles {
 
     eval(scene, map, x, y, slashWay) {
         this.shape.set(x, y, slashWay);
-        const geometry = [
+        let geometries = [
             new THREE.BufferGeometry(),
             new THREE.BufferGeometry()
         ];
@@ -22,20 +22,20 @@ class Tiles {
                 new Float32Array([
                     x, y, map.get(x, y),
                     x + 1, y, map.get(x + 1, y),
-                    x, y + 1, map.get(x + 1, y)
+                    x, y + 1, map.get(x, y + 1)
                 ]),
                 new Float32Array([
                     x + 1, y + 1, map.get(x + 1, y + 1),
-                    x + 1, y, map.get(x + 1, y),
-                    x, y + 1, map.get(x + 1, y)
+                    x, y + 1, map.get(x, y + 1),
+                    x + 1, y, map.get(x + 1, y)
                 ])
             ];
         } else {
             var vertices = [
                 new Float32Array([
                     x + 1, y, map.get(x + 1, y),
-                    x, y, map.get(x, y),
-                    x + 1, y + 1, map.get(x + 1, y + 1)
+                    x + 1, y + 1, map.get(x + 1, y + 1),
+                    x, y, map.get(x, y)
                 ]), new Float32Array([
                     x, y + 1, map.get(x, y + 1),
                     x, y, map.get(x, y),
@@ -44,16 +44,21 @@ class Tiles {
             ];
         }
 
-        const material = new THREE.MeshBasicMaterial({ color: 0x3366cc });
+        let material = new THREE.MeshStandardMaterial({ color: 0x3366CC });
 
         for (let i = 0; i < 2; i++) {
-            geometry[i].setAttribute('position', new THREE.BufferAttribute(vertices[i], 3));
-            
-            const mesh = new THREE.Mesh(geometry[i], material);
-            this.mesh[i].set(x, y, mesh);
+            geometries[i].setAttribute('position', new THREE.BufferAttribute(vertices[i], 3));
+            geometries[i].computeVertexNormals();
+
+            let mesh = new THREE.Mesh(geometries[i], material);
+
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+
             scene.add(mesh);
+
+            this.mesh[i].set(x, y, mesh);
         }
-        console.log('mesh');
     }
 
     // tile [0 / 1] and [1 \ 0]

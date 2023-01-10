@@ -1,21 +1,26 @@
 class ExApp {
-    constructor(elm, w, h, imgNames) {
-        this.elm = elm;
+    constructor(jelm, w, h, imgNames) {
+        this.jelm = jelm;
         this.w = w;
         this.h = h;
         this.imgNames = imgNames;
 
-        this.rnd = new THREE.WebGLRenderer({
-            canvas: document.querySelector('#app'),//$('#app').get(),
+        this.renderer = new THREE.WebGLRenderer({
+            canvas: this.jelm.get()[0],
             antialias: false
         });
-        this.rnd.setPixelRatio(window.devicePixelRatio);
-        this.rnd.setSize(this.w, this.h);
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setSize(this.w, this.h);
+        this.renderer.shadowMap.enabled = true;
 
         this.scene = new THREE.Scene();
+        
         this.camera = new THREE.PerspectiveCamera(45, this.w / this.h);
-        this.camera.position.set(0, 0, 1000);
+        this.camera.position.set(0, 0, 0);
 
+        this.light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+        this.light.position.set(0, 0, 0);
+        this.scene.add(this.light);
         this.textures = {};
     }
 
@@ -26,7 +31,7 @@ class ExApp {
     }
 
     render() {
-        this.rnd.render(this.scene, this.camera);
+        this.renderer.render(this.scene, this.camera);
     }
 
     resetScene() {
@@ -39,6 +44,6 @@ class ExApp {
 }
 
 class ExSprite {
-    constructor(imgName) {
+    constructor(app, imgName) {
     }
 }
