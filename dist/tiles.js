@@ -20,26 +20,26 @@ class Tiles {
         if (slashWay == Tiles.Slash()) {
             var vertices = [
                 new Float32Array([
-                    x, y, map.get(x, y),
-                    x + 1, y, map.get(x + 1, y),
-                    x, y + 1, map.get(x, y + 1)
+                    x, map.get(x, y), y,
+                    x, map.get(x, y + 1), y + 1,
+                    x + 1, map.get(x + 1, y), y,
                 ]),
                 new Float32Array([
-                    x + 1, y + 1, map.get(x + 1, y + 1),
-                    x, y + 1, map.get(x, y + 1),
-                    x + 1, y, map.get(x + 1, y)
+                    x + 1, map.get(x + 1, y + 1), y + 1,
+                    x + 1, map.get(x + 1, y), y,
+                    x, map.get(x, y + 1), y + 1,
                 ])
             ];
         } else {
             var vertices = [
                 new Float32Array([
-                    x + 1, y, map.get(x + 1, y),
-                    x + 1, y + 1, map.get(x + 1, y + 1),
-                    x, y, map.get(x, y)
+                    x + 1, map.get(x + 1, y + 1), y + 1,
+                    x + 1, map.get(x + 1, y), y,
+                    x, map.get(x, y), y,
                 ]), new Float32Array([
-                    x, y + 1, map.get(x, y + 1),
-                    x, y, map.get(x, y),
-                    x + 1, y + 1, map.get(x + 1, y + 1)
+                    x + 1, map.get(x + 1, y + 1), y + 1,
+                    x, map.get(x, y), y,
+                    x, map.get(x, y + 1), y + 1,
                 ])
             ];
         }

@@ -5,13 +5,26 @@ class ExApp {
         this.h = h;
         this.imgNames = imgNames;
 
+        //キー入力
+        this.keyCode = null;
+        $('html').on('keydown', ((e) => {
+            this.keyCode = e.keyCode;
+        }).bind(this));
+
+        $('html').on('keyup', ((e) => {
+            this.keyCode = null;
+        }).bind(this));
+        //絵など
+        this.textures = {};
+
+        //three.js
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.jelm.get()[0],
             antialias: false
         });
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.w, this.h);
-        this.renderer.shadowMap.enabled = true;
+        //this.renderer.shadowMap.enabled = true;
 
         this.scene = new THREE.Scene();
         
@@ -21,7 +34,6 @@ class ExApp {
         this.light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
         this.light.position.set(0, 0, 0);
         this.scene.add(this.light);
-        this.textures = {};
     }
 
     loadTextures() {
@@ -44,6 +56,11 @@ class ExApp {
 }
 
 class ExSprite {
-    constructor(app, imgName) {
+    constructor(app) {
+        this.app = app;
+    }
+
+    tick(deltaTime) {
+
     }
 }
