@@ -3,14 +3,36 @@ class Tiles {
     constructor(w, h) {
         this.w = w;
         this.h = h;
+
         this.shape = new Grid(w, h, 0);
-        this.mesh = [
-            new Grid(w, h, null),
-            new Grid(w, h, null)
-        ];
+        this.geometries = [];
+        this.geometry = null;
+        this.material = new THREE.MeshStandardMaterial({
+            vertexColors: true,
+            transparent: false//use alpha?
+        });
+        this.mesh = null;
+
+        this.colors = {
+            test: new THREE.Color(0x336699),
+        };
+        this.vertexColors = {};
+        this.setVertexColors();
     }
 
-    eval(scene, map, x, y, slashWay) {
+    setVertexColors() {
+        Object.keys(this.colors).forEach((key) => {
+            let color = this.colors[key];
+            this.vertexColors[key] = [];
+            for (let i = 0; i < 9; i += 3) {
+                this.vertexColors[key][i] = color.r;
+                this.vertexColors[key][i + 1] = color.g;
+                this.vertexColors[key][i + 2] = color.b;
+            }
+        });
+    }
+
+    eval(map, x, y, slashWay) {
         this.shape.set(x, y, slashWay);
         let geometries = [
             new THREE.BufferGeometry(),
@@ -44,21 +66,22 @@ class Tiles {
             ];
         }
 
-        let material = new THREE.MeshStandardMaterial({ color: 0x3366CC });
-
         for (let i = 0; i < 2; i++) {
             geometries[i].setAttribute('position', new THREE.BufferAttribute(vertices[i], 3));
+            geometries[i].setAttribute('color', new THREE.Float32BufferAttribute(this.vertexColors.test, 3));
             geometries[i].computeVertexNormals();
-
-            let mesh = new THREE.Mesh(geometries[i], material);
-
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
-
-            scene.add(mesh);
-
-            this.mesh[i].set(x, y, mesh);
+            this.geometries.push(geometries[i]);
         }
+    }
+
+    setMesh(scene) {
+        this.geometry = new THREE.BufferGeometryUtils.mergeBufferGeometries(this.geometries);
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+
+        this.mesh.castShadow = true;
+        this.mesh.receiveShadow = true;
+
+        scene.add(this.mesh);
     }
 
     // tile [0 / 1] and [1 \ 0]

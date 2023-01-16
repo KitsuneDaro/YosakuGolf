@@ -24,7 +24,7 @@ class ExApp {
         });
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.w, this.h);
-        //this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.enabled = true;
 
         this.scene = new THREE.Scene();
         
@@ -55,12 +55,47 @@ class ExApp {
     }
 }
 
-class ExSprite {
+class Sprite {
     constructor(app) {
         this.app = app;
     }
 
     tick(deltaTime) {
 
+    }
+}
+
+class Chara extends Sprite{
+    constructor(app) {
+        super(app);
+        
+        this.m = 1;
+        this.p = {x: 0, y: 0, z: 0};
+        this.v = {x: 0, y: 0, z: 0};
+        this.f = {x: 0, y: 0, z: 0};
+    }
+
+    update(deltaTime) {
+        ['x', 'y', 'z'].forEach((key) => {
+            this.f[key] -= (Chara.AirK() * this.v[key]);// + Chara.FrictionMu() * Chara.GravityG() * this.m);
+            this.v[key] += this.f[key] * deltaTime / this.m;
+            this.p[key] += this.v[key] * deltaTime;
+        });
+    }
+
+    static AirK(){
+        return 0.1;
+    }
+
+    static FrictionMu(){
+        return 0.2;
+    }
+
+    static GravityG(){
+        return 9.8 * Chara.PxPerMeter();
+    }
+
+    static PxPerMeter(){
+        return 0.3;
     }
 }

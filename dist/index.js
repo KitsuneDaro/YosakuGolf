@@ -21,7 +21,7 @@ class Main {
         if (this.nowTime === null) {
             this.nowTime = timeStamp;
         }
-        let deltaTime = timeStamp - this.nowTime;
+        let deltaTime = (timeStamp - this.nowTime) / 1000.0;
         this.nowTime = timeStamp;
 
         //各シーン実行
@@ -63,35 +63,13 @@ class Game extends State {
     constructor(app, stageNum) {
         super(app);
         this.stage = new Stage(this.app, stageNum);
-
-        this.look = {
-            position: new THREE.Vector3(4.5, 0, 4.5),
-            angle: {
-                xy: 0,
-                z: 1 / 6  * Math.PI
-            },
-            distance: 20
-        };
-        this.look.hd = Math.cos(this.look.angle.z) * this.look.distance;
-        this.look.vd = Math.sin(this.look.angle.z) * this.look.distance;
-
-        this.lightAngle = 0;
-        this.app.light.position.set(this.look.position.x + Math.sin(this.lightAngle) * 10, this.look.position.y + 10, this.look.position.z + Math.cos(this.lightAngle) * 10);        
-        this.app.light.lookAt(new THREE.Vector3(this.look.position.x, this.look.position.y, this.look.position.z));
     }
 
     tick(deltaTime) {
-        this.stage.tick(deltaTime);
-
         //カメラ移動
-        this.look.angle.xy += 1 / 5 * Math.PI * deltaTime / 1000;
-        this.app.camera.position.set(
-            this.look.position.x + Math.sin(this.look.angle.xy) * this.look.hd,
-            this.look.position.y + this.look.vd,
-            this.look.position.z + Math.cos(this.look.angle.xy) * this.look.hd
-        );
-        this.app.camera.lookAt(new THREE.Vector3(this.look.position.x, this.look.position.y, this.look.position.z));
+        //this.stage.look.angle.xy += 1 / 5 * Math.PI * deltaTime;
 
+        this.stage.tick(deltaTime);
         this.app.render();
         return 'continue';
     }

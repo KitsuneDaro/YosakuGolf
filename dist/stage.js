@@ -9,10 +9,25 @@ class Stage {
 
         this.num = stageNum;
         this.map = new Grid(this.w, this.h, 0);
-        this.grads = new Gradients(this.w, this.h);
+        this.grads = new Gradients(this.map);
         this.tiles = new Tiles(this.w - 1, this.h - 1);
 
         this.sprites = [];
+
+        this.look = {
+            position: new THREE.Vector3(4.5, 4.5, 0),
+            angle: {
+                xy: 0,
+                z: 1 / 6  * Math.PI
+            },
+            distance: 20
+        };
+        this.look.hd = Math.cos(this.look.angle.z) * this.look.distance;
+        this.look.vd = Math.sin(this.look.angle.z) * this.look.distance;
+
+        this.lightAngle = 0;
+        this.app.light.position.set(this.look.position.x + Math.sin(this.lightAngle) * 10, this.look.position.y + 10, this.look.position.z + Math.cos(this.lightAngle) * 10);        
+        this.app.light.lookAt(new THREE.Vector3(this.look.position.x, this.look.position.y, this.look.position.z));
 
         this.test();
     }
@@ -33,12 +48,14 @@ class Stage {
         for (let x = 0; x < this.w - 1; x++) {
             for (let y = 0; y < this.h - 1; y++) {
                 if (Math.random() > 0.5) {
-                    this.tiles.eval(this.app.scene, this.map, x, y, Tiles.Slash())
+                    this.tiles.eval(this.map, x, y, Tiles.Slash())
                 } else {
-                    this.tiles.eval(this.app.scene, this.map, x, y, Tiles.BackSlash());
+                    this.tiles.eval(this.map, x, y, Tiles.BackSlash());
                 }
             }
         }
+        this.tiles.setMesh(this.app.scene);
+        this.grads.evalAll();
 
         this.sprites.push(new Yosaku(this.app, this, 4.5, 4.5));
     }
@@ -47,6 +64,13 @@ class Stage {
         this.sprites.forEach((sprite) => {
             sprite.tick(deltaTime);
         });
+        
+        this.app.camera.position.set(
+            this.look.position.x + Math.cos(this.look.angle.xy) * this.look.hd,
+            this.look.position.z + this.look.vd,
+            this.look.position.y + Math.sin(this.look.angle.xy) * this.look.hd
+        );
+        this.app.camera.lookAt(new THREE.Vector3(this.look.position.x, this.look.position.z, this.look.position.y));
     }
 
     getZ(px, py) {
@@ -54,6 +78,10 @@ class Stage {
         let my = Math.floor(py);
         let dx = px - mx;
         let dy = py - my;
+
+        if (mx < 0 || mx >= this.w - 1 || my < 0 || my >= this.h - 1){
+            return 0;
+        }
 
         if (this.tiles.shape.get(mx, my) == Tiles.Slash()) {
             if (dx + dy < 1) {// Upper
@@ -70,7 +98,7 @@ class Stage {
                 );
             }
         } else {
-            if (dx - dy > 1) {// Upper
+            if (dx - dy > 0) {// Upper
                 return (
                     this.map.get(mx + 1, my)
                     + this.grads.x.get(mx, my) * (dx - 1)
