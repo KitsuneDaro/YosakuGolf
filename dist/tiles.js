@@ -1,5 +1,10 @@
 //上三角と下三角の組み合わせのマップパターン
 class Tiles {
+    static Material = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        transparent: false//use alpha?
+    });
+
     constructor(w, h) {
         this.w = w;
         this.h = h;
@@ -7,19 +12,14 @@ class Tiles {
         this.shape = new Grid(w, h, 0);
         this.geometries = [];
         this.geometry = null;
-        this.material = new THREE.MeshStandardMaterial({
-            vertexColors: true,
-            transparent: false//use alpha?
-        });
         this.mesh = null;
 
         this.colors = {
-            test: new THREE.Color(0x336699),
+            test: ExApp.ColorAttribute(0x336699, 3, 3),
         };
-        this.vertexColors = {};
-        this.setVertexColors();
     }
 
+    /*
     setVertexColors() {
         Object.keys(this.colors).forEach((key) => {
             let color = this.colors[key];
@@ -31,6 +31,7 @@ class Tiles {
             }
         });
     }
+    */
 
     eval(map, x, y, slashWay) {
         this.shape.set(x, y, slashWay);
@@ -68,7 +69,7 @@ class Tiles {
 
         for (let i = 0; i < 2; i++) {
             geometries[i].setAttribute('position', new THREE.BufferAttribute(vertices[i], 3));
-            geometries[i].setAttribute('color', new THREE.Float32BufferAttribute(this.vertexColors.test, 3));
+            geometries[i].setAttribute('color', this.colors.test);
             geometries[i].computeVertexNormals();
             this.geometries.push(geometries[i]);
         }
@@ -76,7 +77,7 @@ class Tiles {
 
     setMesh(scene) {
         this.geometry = new THREE.BufferGeometryUtils.mergeBufferGeometries(this.geometries);
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh = new THREE.Mesh(this.geometry, Tiles.Material);
 
         this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;

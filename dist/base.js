@@ -62,18 +62,26 @@ class Grid {
     }
 }
 
-class Vec2 {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.mgn = Math.sqrt(x ** 2 + y ** 2);
-        this.angle = Math.atan2(y, x);
-    }
-}
-
 class Key {
-    static ofArrow(keyNum) {
-        return (keyNum >= 37 && keyNum <= 40);
+    static codes = [];
+
+    static setKey(){
+        //キー入力
+        $('html').on('keydown', ((e) => {
+           Key.codes[e.keyCode] = true;
+        }).bind(this));
+
+        $('html').on('keyup', ((e) => {
+           Key.codes[e.keyCode] = false;
+        }).bind(this));
+    }
+
+    static ofArrow() {
+        for (let code = 37; code <= 40; code++){
+            if (Key.codes[code]){
+                return true;
+            }
+        }
     }
 
     static Left() {

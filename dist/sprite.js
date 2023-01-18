@@ -5,17 +5,10 @@ class ExApp {
         this.h = h;
         this.imgNames = imgNames;
 
-        //キー入力
-        this.keyCode = null;
-        $('html').on('keydown', ((e) => {
-            this.keyCode = e.keyCode;
-        }).bind(this));
-
-        $('html').on('keyup', ((e) => {
-            this.keyCode = null;
-        }).bind(this));
         //絵など
         this.textures = {};
+
+        Key.setKey();
 
         //three.js
         this.renderer = new THREE.WebGLRenderer({
@@ -53,6 +46,20 @@ class ExApp {
     add(mesh) {
         this.scene.add(mesh);
     }
+
+    static ColorAttribute(colorNum, vertexNum, n){
+        let color = new THREE.Color(colorNum);
+        console.log(vertexNum);
+        let vertexColor = new Array(vertexNum * 3);
+
+        for (let i = 0; i < vertexNum * 3; i += 3) {
+            vertexColor[i] = color.r;
+            vertexColor[i + 1] = color.g;
+            vertexColor[i + 2] = color.b;
+        }
+
+        return new THREE.Float32BufferAttribute(vertexColor, n);
+    }
 }
 
 class Sprite {
@@ -77,18 +84,20 @@ class Chara extends Sprite{
 
     update(deltaTime) {
         ['x', 'y', 'z'].forEach((key) => {
-            this.f[key] -= (Chara.AirK() * this.v[key]);// + Chara.FrictionMu() * Chara.GravityG() * this.m);
+            if (this.v.length() > 0){
+                this.f[key] -= (Chara.AirK() * this.v[key] + Chara.FrictionMu() * Chara.GravityG() * this.m * this.v[key] / this.v.length());
+            }
             this.v[key] += this.f[key] * deltaTime / this.m;
             this.p[key] += this.v[key] * deltaTime;
         });
     }
 
     static AirK(){
-        return 0.1;
+        return 0.5;
     }
 
     static FrictionMu(){
-        return 0.2;
+        return 0.5;
     }
 
     static GravityG(){

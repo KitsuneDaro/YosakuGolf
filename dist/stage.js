@@ -20,7 +20,7 @@ class Stage {
                 xy: 0,
                 z: 1 / 6  * Math.PI
             },
-            distance: 20
+            distance: 10
         };
         this.look.hd = Math.cos(this.look.angle.z) * this.look.distance;
         this.look.vd = Math.sin(this.look.angle.z) * this.look.distance;
@@ -58,6 +58,7 @@ class Stage {
         this.grads.evalAll();
 
         this.sprites.push(new Yosaku(this.app, this, 4.5, 4.5));
+        this.sprites.push(new Tree(this.app, this, 7, 7));
     }
 
     tick(deltaTime) {
