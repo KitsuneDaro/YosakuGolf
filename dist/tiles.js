@@ -33,8 +33,8 @@ class Tiles {
     }
     */
 
-    eval(map, x, y, slashWay) {
-        this.shape.set(x, y, slashWay);
+    eval(map, x, z, slashWay) {
+        this.shape.set(x, z, slashWay);
         let geometries = [
             new THREE.BufferGeometry(),
             new THREE.BufferGeometry()
@@ -43,26 +43,26 @@ class Tiles {
         if (slashWay == Tiles.Slash()) {
             var vertices = [
                 new Float32Array([
-                    x, map.get(x, y), y,
-                    x, map.get(x, y + 1), y + 1,
-                    x + 1, map.get(x + 1, y), y,
+                    x, map.get(x, z), z,
+                    x, map.get(x, z + 1), z + 1,
+                    x + 1, map.get(x + 1, z), z,
                 ]),
                 new Float32Array([
-                    x + 1, map.get(x + 1, y + 1), y + 1,
-                    x + 1, map.get(x + 1, y), y,
-                    x, map.get(x, y + 1), y + 1,
+                    x + 1, map.get(x + 1, z + 1), z + 1,
+                    x + 1, map.get(x + 1, z), z,
+                    x, map.get(x, z + 1), z + 1,
                 ])
             ];
         } else {
             var vertices = [
                 new Float32Array([
-                    x + 1, map.get(x + 1, y + 1), y + 1,
-                    x + 1, map.get(x + 1, y), y,
-                    x, map.get(x, y), y,
+                    x + 1, map.get(x + 1, z + 1), z + 1,
+                    x + 1, map.get(x + 1, z), z,
+                    x, map.get(x, z), z,
                 ]), new Float32Array([
-                    x + 1, map.get(x + 1, y + 1), y + 1,
-                    x, map.get(x, y), y,
-                    x, map.get(x, y + 1), y + 1,
+                    x + 1, map.get(x + 1, z + 1), z + 1,
+                    x, map.get(x, z), z,
+                    x, map.get(x, z + 1), z + 1,
                 ])
             ];
         }
