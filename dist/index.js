@@ -66,9 +66,6 @@ class Game extends State {
     }
 
     tick(deltaTime) {
-        //カメラ移動
-        //this.stage.look.angle.xy += 1 / 5 * Math.PI * deltaTime;
-
         this.stage.tick(deltaTime);
         this.app.render();
         return 'continue';

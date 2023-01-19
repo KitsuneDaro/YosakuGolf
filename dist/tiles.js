@@ -2,7 +2,7 @@
 class Tiles {
     static Material = new THREE.MeshStandardMaterial({
         vertexColors: true,
-        transparent: false//use alpha?
+        transparent: false
     });
 
     constructor(w, h) {
@@ -18,20 +18,6 @@ class Tiles {
             test: ExApp.ColorAttribute(0x336699, 3, 3),
         };
     }
-
-    /*
-    setVertexColors() {
-        Object.keys(this.colors).forEach((key) => {
-            let color = this.colors[key];
-            this.vertexColors[key] = [];
-            for (let i = 0; i < 9; i += 3) {
-                this.vertexColors[key][i] = color.r;
-                this.vertexColors[key][i + 1] = color.g;
-                this.vertexColors[key][i + 2] = color.b;
-            }
-        });
-    }
-    */
 
     eval(map, x, y, slashWay) {
         this.shape.set(x, y, slashWay);

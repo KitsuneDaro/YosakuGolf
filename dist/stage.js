@@ -17,7 +17,7 @@ class Stage {
         this.look = {
             position: new THREE.Vector3(4.5, 4.5, 0),
             angle: {
-                xy: 0,
+                xy: 1 / 2 * Math.PI,
                 z: 1 / 6  * Math.PI
             },
             distance: 10
