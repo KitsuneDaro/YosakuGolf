@@ -18,11 +18,11 @@ class Yosaku extends Chara {
         side: THREE.DoubleSide
     });
 
-    constructor(app, stage, x, y) {
+    constructor(app, stage, x, z) {
         super(app);
         this.stage = stage;
 
-        this.p = new THREE.Vector3(x, y, Yosaku.H() / 2 + this.stage.getZ(x, y));
+        this.p = new THREE.Vector3(x, Yosaku.H() / 2 + this.stage.getY(x, z), z);
 
         this.v = new THREE.Vector3(0, 0, 0);
         this.f = new THREE.Vector3(0, 0, 0);
@@ -38,27 +38,27 @@ class Yosaku extends Chara {
         this.stage.look.position.add(gap);
         
         //カメラ移動
-        let angle = this.stage.look.angle.xy;
+        let angle = this.stage.look.angle.xz;
         
         if (Key.ofArrow()) {
             if (Key.codes[Key.Up()]) {
                 this.f.x += -Math.cos(angle);
-                this.f.y += -Math.sin(angle);
+                this.f.z += -Math.sin(angle);
             }
 
             if (Key.codes[Key.Down()]) {
                 this.f.x += -Math.cos(angle + Math.PI);
-                this.f.y += -Math.sin(angle + Math.PI);
+                this.f.z += -Math.sin(angle + Math.PI);
             }
 
             if (Key.codes[Key.Left()]) {
                 this.f.x += -Math.cos(angle - Math.PI / 2);
-                this.f.y += -Math.sin(angle - Math.PI / 2);
+                this.f.z += -Math.sin(angle - Math.PI / 2);
             }
 
             if (Key.codes[Key.Right()]) {
                 this.f.x += -Math.cos(angle + Math.PI / 2);
-                this.f.y += -Math.sin(angle + Math.PI / 2);
+                this.f.z += -Math.sin(angle + Math.PI / 2);
             }
 
             this.f.multiplyScalar(Yosaku.Speed());
@@ -66,10 +66,10 @@ class Yosaku extends Chara {
 
         this.update(deltaTime);
 
-        this.stage.look.angle.xy = angle + 1 / 720 * Math.PI * this.f.x;
+        this.stage.look.angle.xz = angle + 1 / 720 * Math.PI * this.f.x;
 
-        this.p.z = Yosaku.H() / 2 + this.stage.getZ(this.p.x, this.p.y);
-        this.mesh.position.set(this.p.x, this.p.z, this.p.y);
+        this.p.y = Yosaku.H() / 2 + this.stage.getY(this.p.x, this.p.z);
+        this.mesh.position.set(this.p.x, this.p.y, this.p.z);
         this.mesh.rotation.y = -angle + Math.PI / 2;
 
         this.f = new THREE.Vector3(0, 0, 0);
@@ -126,7 +126,7 @@ class Tree extends Chara{
         return root;
     }
 
-    constructor(app, stage, x, y) {
+    constructor(app, stage, x, z) {
         super(app);
         this.stage = stage;
 
@@ -139,20 +139,19 @@ class Tree extends Chara{
         this.rootMesh = new THREE.Mesh(Tree.RootGeometry, Tree.RootMaterial);
         this.app.scene.add(this.rootMesh);
         
-        this.p = new THREE.Vector3(x, y, Tree.StemH() / 2 + this.stage.getZ(x, y));
+        this.p = new THREE.Vector3(x, Tree.StemH() / 2 + this.stage.getY(x, z), z);
     }
 
     tick() {
         let d = this.stage.sprites[0].p.clone().sub(this.p);
-        d.z = 0;
+        d.y = 0;
         
         if (d.length() < (Yosaku.W() + Tree.StemDiameter()) / 2) {
             this.stage.sprites[0].f.add(d.divide(new THREE.Vector3(1, 1, 1))).multiplyScalar(20);
-            console.log('hit');
         }
         
-        this.leavesMesh.position.set(this.p.x, this.p.z, this.p.y);
-        this.stemMesh.position.set(this.p.x, this.p.z, this.p.y);
-        this.rootMesh.position.set(this.p.x, this.p.z, this.p.y);
+        this.leavesMesh.position.set(this.p.x, this.p.y, this.p.z);
+        this.stemMesh.position.set(this.p.x, this.p.y, this.p.z);
+        this.rootMesh.position.set(this.p.x, this.p.y, this.p.z);
     }
 }
